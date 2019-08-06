@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -184,28 +184,31 @@ public class CaesarCycleScript : MonoBehaviour {
         yield return null;
     }
 #pragma warning disable 414
-    private string TwitchHelpMessage = "!{0} QWERTY [Inputs letters] | !{0} cancel [Deletes inputs]";
+    private string TwitchHelpMessage = "!{0} QWERTYUI [Inputs letters] | !{0} cancel [Deletes inputs]";
 #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
-        if (Regex.IsMatch(command, @"^\s*cancel\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+
+        if (command.ToLowerInvariant() == "cancel")
         {
-            yield return null;
             KeyPress(26);
+            yield return null;
         }
         else
         {
-            var word = Regex.Match(command, @"^\s*([QWERTYUIOPASDFGHJKLZXCVBNM, ]+)\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            command = command.ToUpperInvariant();
+            var word = Regex.Match(command, @"^\s*([A-Z\-]+)\s*$");
             if (!word.Success)
             {
                 yield break;
             }
-            yield return null;
+            command = command.Replace(" ", string.Empty);
             foreach (char letter in command)
             {
                 KeyPress("QWERTYUIOPASDFGHJKLZXCVBNM".IndexOf(letter));
                 yield return new WaitForSeconds(0.125f);
             }
+            yield return null;
         }
     }
 }
